@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, Image, TouchableOpacity } from "react-native";
 
 // IMPORTA EL ESTILO AQUÍ
-import { welcomeStyles as styles } from "../styles/WelcomeStyles";
+import { welcomeStyles as styles } from "../../styles/WelcomeStyles";
 
 export default function WelcomePregunta({ navigation }) {
   return (
@@ -11,7 +11,7 @@ export default function WelcomePregunta({ navigation }) {
         <Text style={styles.title}>GO DOGGY</Text>
         <Text style={styles.subtitle}>dog walking</Text>
         <Image
-          source={require("../assets/splash-icon.png")}
+          source={require("../../assets/splash-icon.png")}
           style={styles.mainImage}
         />
       </View>

@@ -4,9 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // Importaciones con nombres exactos
-import WelcomePregunta from "./vistas/WelcomePregunta";
-import Login from "./vistas/Login";
-import Inicio_cliente from "./vistas/Inicio_cliente";
+import WelcomePregunta from "./src/views/auth/WelcomePregunta";
+import Login from "./src/views/auth/Login";
+import Inicio_cliente from "./src/views/auth/Inicio_cliente";
 
 const Stack = createStackNavigator();
 

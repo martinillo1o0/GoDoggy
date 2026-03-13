@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
-import { loginStyles as styles } from "../styles/LoginStyles";
+import { loginStyles as styles } from "../../styles/LoginStyles";
 
 export default function Login() {
   return (
@@ -8,7 +8,7 @@ export default function Login() {
       <View style={styles.header}></View>
 
       <Image
-        source={require("../assets/logo.png")}
+        source={require("../../assets/splash-icon.png")}
         style={styles.backgroundImage}
       />
 

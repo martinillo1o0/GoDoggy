@@ -19,7 +19,8 @@ export const welcomeStyles = StyleSheet.create({
     padding: 30,
     alignItems: "center",
   },
-  questionText: { fontSize: 20, marginBottom: 25, fontWeight: "500" },
+  questionText: 
+  { fontSize: 20, marginBottom: 25, fontWeight: "500" },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",

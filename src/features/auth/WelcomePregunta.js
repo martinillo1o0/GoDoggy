@@ -8,10 +8,8 @@ export default function WelcomePregunta({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>GO DOGGY</Text>
-        <Text style={styles.subtitle}>dog walking</Text>
         <Image
-          source={require("../assets/splash-icon.png")}
+          source={require("../assets/logo.png")}
           style={styles.mainImage}
         />
       </View>

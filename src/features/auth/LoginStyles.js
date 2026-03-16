@@ -1,10 +1,6 @@
 import { StyleSheet } from "react-native";
-
 export const loginStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F0",
-  },
+  container: { flex: 1, backgroundColor: "#F5F5F0" },
   header: {
     flex: 0.7,
     alignItems: "center",
@@ -12,7 +8,8 @@ export const loginStyles = StyleSheet.create({
     paddingTop: 40,
     zIndex: 2,
   },
-
+  title: { fontSize: 45, fontWeight: "bold", color: "#000" },
+  subtitle: { fontSize: 22, color: "#000" },
   backgroundImage: {
     position: "absolute",
     top: 0,
@@ -34,14 +31,8 @@ export const loginStyles = StyleSheet.create({
     elevation: 10,
     zIndex: 3,
   },
-  inputGroup: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 2,
-  },
+  inputGroup: { marginBottom: 15 },
+  label: { fontSize: 14, color: "#555", marginBottom: 2 },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: "#000",
@@ -54,11 +45,6 @@ export const loginStyles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     marginTop: 15,
-    elevation: 3,
   },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
+  buttonText: { fontSize: 16, fontWeight: "bold", color: "#333" },
 });

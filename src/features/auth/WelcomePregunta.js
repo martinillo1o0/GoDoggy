@@ -1,34 +1,33 @@
 import React from "react";
-import { Text, View, Image, TouchableOpacity } from "react-native";
-
-// IMPORTA EL ESTILO AQUÍ
-import { welcomeStyles as styles } from "../styles/WelcomeStyles";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { welcomeStyles as styles } from "./WelcomeStyles";
 
 export default function WelcomePregunta({ navigation }) {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.mainImage}
-        />
-      </View>
+      <Image
+        source={require("../../../assets/logo.png")}
+        style={styles.backgroundImage}
+      />
 
-      <View style={styles.footer}>
-        <Text style={styles.questionText}>¿Para que deceas tu cuenta?</Text>
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={[styles.card, { backgroundColor: "#57B48C" }]}
-          >
-            <Text style={styles.cardText}>Prestador de Servicio</Text>
-          </TouchableOpacity>
+      <View style={styles.header}></View>
 
-          <TouchableOpacity
-            style={[styles.card, { backgroundColor: "#8B2232" }]}
-          >
-            <Text style={styles.cardText}>Usuario de Normal</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.card}>
+        <Text style={styles.pregunta}>¿Cómo quieres unirte hoy?</Text>
+
+        <TouchableOpacity
+          style={styles.buttonDueño}
+          onPress={() => navigation.navigate("Welcome", { tipo: "cliente" })}
+        >
+          <Text style={styles.buttonText}>Soy Cliente</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.buttonPaseador}
+          onPress={() => navigation.navigate("Welcome", { tipo: "paseador" })}
+        >
+          <Text style={styles.buttonText}>Soy Paseador</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

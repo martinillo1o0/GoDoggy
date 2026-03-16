@@ -2,72 +2,55 @@ import React from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from "react-native";
-import { loginStyles as styles } from "./LoginStyles";
+import { styles } from "./RegistroPaseadorStyles";
 
 export default function RegistroPaseador({ navigation }) {
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity
-        style={{ padding: 20, marginTop: 40, zIndex: 10 }}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={{ color: "#2ECC71", fontWeight: "bold" }}>← Regresar</Text>
-      </TouchableOpacity>
-
-      <View style={styles.header}></View>
-
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require("../../../assets/logo.png")}
-        style={styles.backgroundImage}
+        style={styles.headerImage}
       />
 
-      <View
-        style={[
-          styles.loginCard,
-          { backgroundColor: "#D1F2EB", marginTop: 20 },
-        ]}
-      >
-        {["Nombre", "Biografía", "Dirección", "Teléfono", "Contraseña"].map(
-          (label) => (
-            <View key={label} style={styles.inputGroup}>
-              <Text style={styles.label}>{label}:</Text>
-              <TextInput
-                style={styles.input}
-                secureTextEntry={label === "Contraseña"}
-              />
-            </View>
-          ),
-        )}
+      <View style={styles.formCard}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Nombre:</Text>
+          <TextInput style={styles.input} />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Biografía:</Text>
+          <TextInput style={styles.input} multiline />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Dirección:</Text>
+          <TextInput style={styles.input} />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Teléfono:</Text>
+          <TextInput style={styles.input} keyboardType="phone-pad" />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Contraseña:</Text>
+          <TextInput style={styles.input} secureTextEntry />
+        </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginVertical: 10,
-          }}
-        >
-          <Text style={styles.label}>Añadir Foto: </Text>
-          <View
-            style={{
-              backgroundColor: "#bbb",
-              width: 60,
-              height: 50,
-              marginLeft: 10,
-              borderRadius: 5,
-            }}
-          />
+        <View style={styles.photoRow}>
+          <Text style={styles.label}>Añadir Foto</Text>
+          <TouchableOpacity style={styles.photoBox}>
+            <Text style={styles.photoText}>FOTO</Text>
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
-          style={[styles.loginButton, { backgroundColor: "#2ECC71" }]}
+          style={styles.submitBtn}
           onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.buttonText}>Crear Usuario</Text>
+          <Text style={styles.submitBtnText}>Crear Usuario</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -2,10 +2,11 @@ import React from "react";
 import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import { loginStyles as styles } from "./LoginStyles";
 
-export default function Login({ navigation }) {
+export default function Login({ route, navigation }) {
+  const { tipo } = route.params || { tipo: "cliente" };
+
   return (
     <View style={styles.container}>
-      {/* BOTÓN VOLVER */}
       <TouchableOpacity
         style={{
           position: "absolute",
@@ -45,7 +46,13 @@ export default function Login({ navigation }) {
 
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => navigation.navigate("Inicio_cliente")}
+          onPress={() => {
+            if (tipo === "cliente") {
+              navigation.navigate("Inicio_cliente");
+            } else {
+              navigation.navigate("Inicio_paseador");
+            }
+          }}
         >
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
         </TouchableOpacity>

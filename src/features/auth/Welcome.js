@@ -23,7 +23,7 @@ export default function Welcome({ route, navigation }) {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.btnIniciar}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("Login", { tipo: tipo })}
         >
           <Text style={styles.btnText}>Iniciar sesión</Text>
         </TouchableOpacity>
@@ -31,11 +31,9 @@ export default function Welcome({ route, navigation }) {
         <TouchableOpacity
           style={styles.btnRegistrar}
           onPress={() => {
-            if (tipo === "cliente") {
-              navigation.navigate("RegistroUsuario");
-            } else {
-              navigation.navigate("RegistroPaseador");
-            }
+            const destino =
+              tipo === "cliente" ? "RegistroUsuario" : "RegistroPaseador";
+            navigation.navigate(destino);
           }}
         >
           <Text style={styles.btnText}>Registrar</Text>

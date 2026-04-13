@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { styles } from "./PerfilUsuarioStyles";
 
 export default function PerfilUsuario({ navigation }) {
+  const [userName, setUserName] = useState("Usuario");
+  const [userImage, setUserImage] = useState(require("../../../assets/perfil.png"));
+
+  useEffect(() => {
+    const usuarioStr = localStorage.getItem("usuario");
+    if (usuarioStr) {
+      const usuario = JSON.parse(usuarioStr);
+      const nombreCompleto = usuario.nombre_completo.split(" ");
+      const primerNombre = nombreCompleto[0] || "Usuario";
+      const primerApellido = nombreCompleto[1] || "";
+      setUserName(`${primerNombre} ${primerApellido}`.trim());
+      if (usuario.url_foto_perfil) {
+        setUserImage({ uri: `http://localhost:3000/uploads/${usuario.url_foto_perfil}` });
+      }
+    }
+  }, []);
   const opciones = [
     {
       id: 1,
@@ -52,10 +68,10 @@ export default function PerfilUsuario({ navigation }) {
         {/* Cabecera del Perfil */}
         <View style={styles.profileSection}>
           <View style={styles.userNameContainer}>
-            <Text style={styles.userNameText}>User3692</Text>
+            <Text style={styles.userNameText}>{userName}</Text>
           </View>
           <Image
-            source={require("../../../assets/perfil.png")}
+            source={userImage}
             style={styles.profileImage}
           />
         </View>

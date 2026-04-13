@@ -105,7 +105,7 @@ const registrarUsuario = async () => {
     }
 
     console.log("🚀 Enviando datos de registro...");
-    console.log("Nombre:", nombre, "Teléfono:", telefono, "Email:", email);
+    console.log("Nombre:", nombre, "Teléfono:", telefono, "Email:", correo);
     console.log("Foto seleccionada:", fotoPerfil ? "Sí" : "No");
 
     const response = await fetch("http://localhost:3000/registro", {

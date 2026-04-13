@@ -39,12 +39,13 @@ const upload = multer({ storage });
 // CONEXIÓN BD
 // ========================
 const db = new Pool({
-  host: 'localhost',
+  host: '127.0.0.1',
   user: 'postgres',
   password: '1111',
   database: 'GoDoggy',
   port: 5432
 });
+
 
 db.connect()
   .then(() => console.log('Conectado a PostgreSQL 🚀'))
@@ -173,16 +174,32 @@ function generarIdMascota(nombreDueno, nombreMascota, fecha) {
 }
 
 // ========================
+// GET MASCOTAS POR USUARIO
+// ========================
+app.get('/mascotas/:usuario_id', async (req, res) => {
+  const { usuario_id } = req.params;
+  try {
+    const result = await db.query('SELECT * FROM mascota WHERE usuario_id = $1', [usuario_id]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// ========================
 // REGISTRO MASCOTA
 // ========================
+
+
 app.post('/mascota', upload.single('foto'), async (req, res) => {
   console.log("🐶 Registro mascota recibido");
   console.log("📥 req.body mascota:", req.body);
   console.log("📷 req.file mascota:", req.file);
 
+
   const {
     nombreMascota,
-    tipoMascota,
     raza,
     color,
     sexo,
@@ -193,43 +210,37 @@ app.post('/mascota', upload.single('foto'), async (req, res) => {
     alergias,
     patas,
     notasExtra,
-    nombreDueno,
-    usuario_id // 🔥 NUEVO
+    usuario_id
   } = req.body;
 
   const foto = req.file ? req.file.filename : null;
 
+  console.log("URL foto:", foto);
+  if (req.file) console.log("Archivo subido en:", req.file.path);
+
   try {
-    if (!nombreMascota || !tipoMascota || !raza || !color || !sexo || !fechaNacimiento || !peso || !usuario_id) {
+
+     const testDB = await db.query("SELECT current_database()");
+    console.log("📦 DB actual:", testDB.rows);
+
+    const count = await db.query("SELECT COUNT(*) FROM mascota");
+    console.log("🐶 TOTAL MASCOTAS:", count.rows);
+
+    if (!nombreMascota || !raza || !color || !sexo || !fechaNacimiento || !peso || !usuario_id) {
       return res.status(400).json({ message: "Datos incompletos mascota" });
     }
-
-    const fechaObj = new Date(fechaNacimiento);
-    if (isNaN(fechaObj.getTime())) {
-      return res.status(400).json({ message: "Fecha de nacimiento inválida" });
-    }
-
-    if (isNaN(Number(peso)) || Number(peso) <= 0) {
-      return res.status(400).json({ message: "Peso inválido" });
-    }
-
-    const mascota_id = generarIdMascota(
-      nombreDueno || "DU",
-      nombreMascota,
-      fechaNacimiento
-    );
-
-    const esEsterilizado = String(esterilizado) === "true";
 
     const fechaFormateada = new Date(fechaNacimiento)
       .toISOString()
       .split("T")[0];
 
+    const esEsterilizado = esterilizado;
+
     const sql = `
       INSERT INTO mascota (
-        mascota_id,
         usuario_id,
         nombre,
+        raza,
         color,
         sexo,
         fecha_nacimiento,
@@ -239,45 +250,93 @@ app.post('/mascota', upload.single('foto'), async (req, res) => {
         alergias,
         num_patas,
         notas_comportamiento,
-        url_foto,
-        tipo,
-        raza
+        url_foto
       )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      RETURNING mascota_id
     `;
 
-    await db.query(sql, [
-      mascota_id,          // $1
-      Number(usuario_id),  // $2 🔥 importante (int)
-      nombreMascota,       // $3
-      color,               // $4
-      sexo,                // $5
-      fechaFormateada,     // $6
-      Number(peso),        // $7
-      esEsterilizado,      // $8
-      miedos,              // $9
-      alergias,            // $10
-      Number(patas),       // $11
-      notasExtra,          // $12
-      foto,                // $13
-      tipoMascota,         // $14
-      raza                 // $15
+    const result = await db.query(sql, [
+      Number(usuario_id),
+      nombreMascota,
+      raza,
+      color,
+      sexo,
+      fechaFormateada,
+      Number(peso),
+      esEsterilizado,
+      miedos,
+      alergias,
+      Number(patas),
+      notasExtra,
+      foto
     ]);
 
     res.json({
       message: "Mascota registrada",
-      mascota_id
+      mascota_id: result.rows[0].mascota_id
     });
 
   } catch (error) {
-   console.error("❌ Error mascota completo:", error);
-  console.error("❌ Detalle:", error.message);
-  console.error("❌ Stack:", error.stack);
-
-  res.status(500).json({
+    console.error("❌ Error mascota completo:", error);
+   res.status(500).json({
     message: "Error al guardar mascota",
-    error: error.message // 🔥 esto es clave
-  });
+    error: error.message,
+    detalle: error.detail,        // 🔥 PostgreSQL detalle real
+    columna: error.column,        // 🔥 columna exacta
+    constraint: error.constraint, // 🔥 restricción (NOT NULL, FK, etc)
+    tipo: error.code              // 🔥 código de error SQL
+    });
+  }
+});
+// ========================
+// GET MASCOTAS POR USUARIO
+// ========================
+app.get('/mascotas/:usuario_id', async (req, res) => {
+  const { usuario_id } = req.params;
+
+  console.log("📥 Endpoint mascotas llamado");
+
+  try {
+    const result = await db.query(
+      'SELECT * FROM mascota WHERE usuario_id = $1',
+      [usuario_id]
+    );
+
+    console.log("🐶 Mascotas encontradas:", result.rows);
+
+    res.json(result.rows);
+
+  } catch (error) {
+    console.error("❌ Error obteniendo mascotas:", error);
+    res.status(500).json({ message: "Error al obtener mascotas" });
+  }
+});
+
+// ========================
+// ELIMINAR MASCOTA
+// ========================
+app.delete('/mascota/:mascota_id', async (req, res) => {
+  const { mascota_id } = req.params;
+
+  console.log("🗑️ Eliminando mascota ID:", mascota_id);
+
+  try {
+    const result = await db.query(
+      'DELETE FROM mascota WHERE mascota_id = $1 RETURNING *',
+      [Number(mascota_id)] // 🔥 CORRECCIÓN AQUÍ
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Mascota no encontrada" });
+    }
+
+    console.log("🐶 Mascota eliminada:", result.rows[0]);
+    res.json({ message: "Mascota eliminada exitosamente" });
+
+  } catch (error) {
+    console.error("❌ Error eliminando mascota:", error);
+    res.status(500).json({ message: "Error al eliminar mascota" });
   }
 });
 
@@ -288,9 +347,8 @@ app.post('/mascota', upload.single('foto'), async (req, res) => {
 
 
 
-// ========================
-// INICIAR SERVIDOR
-// ========================
+
+
 app.listen(3000, () => {
-  console.log('Servidor corriendo en http://localhost:3000');
+  console.log("🚀 Servidor corriendo en http://localhost:3000");
 });

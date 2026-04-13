@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { styles } from "./Inicio_clienteStyles";
 
 export default function Inicio_cliente({ route, navigation }) {
@@ -16,12 +17,39 @@ export default function Inicio_cliente({ route, navigation }) {
   const regresar = () => navigation.goBack();
   const irRegistroMascota = () => navigation.navigate("RegistroMascota");
 
+  useFocusEffect(
+    useCallback(() => {
+      const cargarMascotas = async () => {
+        try {
+          // Obtener usuario de localStorage
+          const usuarioGuardado = localStorage.getItem("usuario");
+          if (!usuarioGuardado) {
+            console.error("No hay usuario guardado en localStorage");
+            setMascotas([]);
+            return;
+          }
+
+          const usuario = JSON.parse(usuarioGuardado);
+          const usuarioId = usuario.usuario_id;
+          
+          console.log("Cargando mascotas para usuario ID:", usuarioId);
+
+          const response = await fetch(`http://localhost:3000/mascotas/${usuarioId}`);
+          const data = await response.json();
+          console.log("Mascotas cargadas:", data);
+          setMascotas(data);
+        } catch (error) {
+          console.error("Error cargando mascotas:", error);
+          setMascotas([]);
+        }
+      };
+      cargarMascotas();
+    }, [])
+  );
+
   useEffect(() => {
-    if (route?.params?.mascota) {
-      setMascotas((prev) => [...prev, route.params.mascota]);
-      navigation.setParams({ mascota: null });
-    }
-  }, [route?.params?.mascota]);
+    console.log("Estado mascotas:", mascotas);
+  }, [mascotas]);
 
   // ========================
   // UI
@@ -53,18 +81,16 @@ export default function Inicio_cliente({ route, navigation }) {
           </View>
         ) : (
           mascotas.map((mascota, index) => (
-            <View key={`${mascota.nombre}-${index}`} style={styles.petCard}>
+            <TouchableOpacity key={`${mascota.nombre}-${index}`} style={styles.petCard} onPress={() => navigation.navigate("MascotaDetalles", { mascota })}>
               <Image
-                source={mascota.foto ? { uri: mascota.foto } : require("../../../assets/perro1.jpg")}
+                source={mascota.url_foto ? { uri: `http://localhost:3000/uploads/${mascota.url_foto}` } : require("../../../assets/perro1.jpg")}
                 style={styles.petImage}
               />
               <View style={styles.petInfo}>
                 <Text style={styles.petName}>{mascota.nombre}</Text>
-                <Text style={styles.petDetails}>Tipo: {mascota.tipo}</Text>
-                <Text style={styles.petDetails}>Raza: {mascota.raza}</Text>
-                <Text style={styles.petDetails}>Color: {mascota.color}</Text>
+                <Text style={styles.petDetails}>Animal: {mascota.raza}</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))
         )}
 

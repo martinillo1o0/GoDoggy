@@ -16,6 +16,7 @@ import CalificacionesUsuario from "./src/features/auth/CalificacionesUsuario";
 import ConfiguracionUsuario from "./src/features/auth/ConfiguracionUsuario";
 import LegalUsuario from "./src/features/auth/LegalUsuario";
 import SeguridadUsuario from "./src/features/auth/SeguridadUsuario";
+import MascotaDetalles from "./src/features/auth/MascotaDetalles";
 
 const Stack = createStackNavigator();
 
@@ -46,6 +47,7 @@ export default function App() {
         />
         <Stack.Screen name="LegalUsuario" component={LegalUsuario} />
         <Stack.Screen name="SeguridadUsuario" component={SeguridadUsuario} />
+        <Stack.Screen name="MascotaDetalles" component={MascotaDetalles} />
       </Stack.Navigator>
     </NavigationContainer>
   );

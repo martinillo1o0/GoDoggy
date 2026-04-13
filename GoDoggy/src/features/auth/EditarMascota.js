@@ -9,7 +9,9 @@ import {
 } from "react-native";
 import { styles } from "./EditarMascotaStyles";
 
-export default function EditarMascota({ navigation }) {
+export default function EditarMascota({ route, navigation }) {
+  const { mascota } = route.params;
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -25,7 +27,7 @@ export default function EditarMascota({ navigation }) {
         <TouchableOpacity style={styles.avatarContainer}>
           <View style={styles.avatar}>
             <Image
-              source={require("../../../assets/perro1.jpg")}
+              source={mascota.url_foto ? { uri: `http://localhost:3000/uploads/${mascota.url_foto}` } : require("../../../assets/perro1.jpg")}
               style={styles.petImage}
             />
           </View>
@@ -34,7 +36,7 @@ export default function EditarMascota({ navigation }) {
 
         <View style={styles.fullInputGroup}>
           <Text style={styles.label}>Nombre de la mascota:</Text>
-          <TextInput style={styles.input} defaultValue="Chocokrispis" />
+          <TextInput style={styles.input} defaultValue={mascota.nombre} />
         </View>
 
         <View style={styles.row}>
@@ -44,7 +46,7 @@ export default function EditarMascota({ navigation }) {
           </View>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Raza:</Text>
-            <TextInput style={styles.input} defaultValue="Pug" />
+            <TextInput style={styles.input} defaultValue={mascota.raza} />
           </View>
         </View>
 
@@ -62,7 +64,7 @@ export default function EditarMascota({ navigation }) {
             <TextInput
               style={styles.input}
               keyboardType="numeric"
-              defaultValue="8"
+              defaultValue={mascota.peso_kg.toString()}
             />
           </View>
         </View>
@@ -75,7 +77,7 @@ export default function EditarMascota({ navigation }) {
               { height: 80, textAlignVertical: "top", paddingTop: 10 },
             ]}
             multiline
-            defaultValue="Es muy amigable pero se asusta con los truenos."
+            defaultValue={mascota.notas_comportamiento || ""}
           />
         </View>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -21,6 +21,7 @@ const formatNombreMascota = (text) => {
 };
 
 export default function RegistroMascota({ navigation }) {
+    const [usuarioId, setUsuarioId] = useState(null);
     const [nombreMascota, setNombreMascota] = useState("");
     const [tipoMascota, setTipoMascota] = useState("");
     const [raza, setRaza] = useState("");
@@ -35,6 +36,14 @@ export default function RegistroMascota({ navigation }) {
     const [patas, setPatas] = useState(4);
     const [notasExtra, setNotasExtra] = useState("");
     const [foto, setFoto] = useState(null);
+
+    useEffect(() => {
+        const usuarioStr = localStorage.getItem("usuario");
+        if (usuarioStr) {
+            const usuario = JSON.parse(usuarioStr);
+            setUsuarioId(usuario.usuario_id);
+        }
+    }, []);
 
     const seleccionarFoto = async () => {
         try {
@@ -103,62 +112,63 @@ export default function RegistroMascota({ navigation }) {
         return true;
     };
 
-    const guardarRegistro = async () => {
-        if (!validarRegistro()) return;
+ const guardarRegistro = async () => {
+    if (!validarRegistro()) return;
 
-        try {
-            const formData = new FormData();
+    if (!usuarioId) {
+        Alert.alert("Error", "Usuario no identificado");
+        return;
+    }
 
-            formData.append("nombreMascota", formatNombreMascota(nombreMascota));
-            formData.append("tipoMascota", tipoMascota);
-            formData.append("raza", raza);
-            formData.append("color", color);
-            formData.append("sexo", sexo);
-            formData.append("fechaNacimiento", fechaNacimiento);
-            formData.append("peso", peso);
-            formData.append("esterilizado", String(esterilizado)); // ✅
-            formData.append("miedos", miedos);
-            formData.append("alergias", tieneAlergia ? alergias : "No");
-            formData.append("patas", patas);
-            formData.append("notasExtra", notasExtra);
+    try {
+        const formData = new FormData();
 
-            formData.append("nombreDueno", "Martin");
+        formData.append("nombreMascota", formatNombreMascota(nombreMascota));
+        formData.append("raza", raza);
+        formData.append("color", color);
+        formData.append("sexo", sexo);
+        formData.append("fechaNacimiento", fechaNacimiento);
+        formData.append("peso", peso);
 
-            // 🔥 NUEVO (usuario)
-            formData.append("usuario_id", 1);
+        formData.append("esterilizado", esterilizado ? "Si" : "No");
+        formData.append("miedos", miedos);
+        formData.append("alergias", tieneAlergia ? alergias : "No");
+        formData.append("patas", patas);
+        formData.append("notasExtra", notasExtra);
+        formData.append("usuario_id", usuarioId);
 
-            // 📷 FOTO
-       /*     if (foto) {
-                formData.append("foto", {
-                    uri: foto.uri,
-                    name: "mascota.jpg",
-                    type: "image/jpeg",
-                });
-            } */
+        // 📷 FOTO (FORMA CORRECTA PARA WEB)
+        if (foto) {
+            const responseImg = await fetch(foto.uri);
+            const blob = await responseImg.blob();
 
-            const response = await fetch("http://TU_IP:3000/mascota", {
-                method: "POST",
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                Alert.alert("Éxito", `Mascota registrada\nID: ${data.mascota_id}`);
-                navigation.navigate("Inicio_cliente");
-            } else {
-                Alert.alert("Error", data.message || "Error al guardar");
-            }
-
-        } catch (error) {
-            console.log("Error:", error);
-            console.error("❌ Error mascota completo:", error);
-            console.error("❌ Detalle:", error.message);
-            console.error("❌ Stack:", error.stack);
-            console.log("📡 Status:", response.status);
-            console.log("📡 Data:", data);
+            formData.append("foto", blob, "mascota.jpg");
         }
-    };
+
+        console.log("🚀 Enviando mascota...");
+        console.log("Foto incluida:", !!foto);
+
+        const response = await fetch("http://localhost:3000/mascota", {
+            method: "POST",
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        console.log("📡 RESPUESTA:", data);
+
+        if (response.ok) {
+            Alert.alert("Éxito", `Mascota registrada\nID: ${data.mascota_id}`);
+            navigation.navigate("Inicio_cliente");
+        } else {
+            Alert.alert("Error", data.message || "Error al guardar");
+        }
+
+    } catch (error) {
+        console.error("❌ Error frontend:", error);
+        Alert.alert("Error", "No se pudo conectar con el servidor");
+    }
+};
 
     const selectedColor = "#D2B48C";
     const unselectedColor = "#fff";
@@ -168,6 +178,11 @@ export default function RegistroMascota({ navigation }) {
             style={{ flex: 1 }}
             behavior="padding"
         >
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10, backgroundColor: "#f5f5f5" }}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={{ fontSize: 28 }}>↩</Text>
+                </TouchableOpacity>
+            </View>
             <ScrollView
                 style={{ flex: 1 }}
                 contentContainerStyle={{ padding: 20, backgroundColor: "#f5f5f5" }}

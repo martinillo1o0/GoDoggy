@@ -8,6 +8,8 @@ import {
     Image,
     Alert,
     KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -174,18 +176,21 @@ export default function RegistroMascota({ navigation }) {
     const unselectedColor = "#fff";
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior="padding"
-        >
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10, backgroundColor: "#f5f5f5" }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+            >
+                <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10, backgroundColor: "#f5f5f5" }}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={{ fontSize: 28 }}>↩</Text>
                 </TouchableOpacity>
             </View>
             <ScrollView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ padding: 20, backgroundColor: "#f5f5f5" }}
+                contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 40, backgroundColor: "#f5f5f5" }}
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
                 showsVerticalScrollIndicator={true}
@@ -443,6 +448,8 @@ export default function RegistroMascota({ navigation }) {
                     <Text style={{ color: "#333", fontWeight: "bold", fontSize: 16 }}>Guardar mascota</Text>
                 </TouchableOpacity>
             </ScrollView>
+        </View>
         </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

@@ -282,10 +282,10 @@ app.post('/mascota', upload.single('foto'), async (req, res) => {
    res.status(500).json({
     message: "Error al guardar mascota",
     error: error.message,
-    detalle: error.detail,        // 🔥 PostgreSQL detalle real
-    columna: error.column,        // 🔥 columna exacta
-    constraint: error.constraint, // 🔥 restricción (NOT NULL, FK, etc)
-    tipo: error.code              // 🔥 código de error SQL
+    detalle: error.detail,       
+    columna: error.column,      
+    constraint: error.constraint, 
+    tipo: error.code              
     });
   }
 });
@@ -324,7 +324,7 @@ app.delete('/mascota/:mascota_id', async (req, res) => {
   try {
     const result = await db.query(
       'DELETE FROM mascota WHERE mascota_id = $1 RETURNING *',
-      [Number(mascota_id)] // 🔥 CORRECCIÓN AQUÍ
+      [Number(mascota_id)] // 
     );
 
     if (result.rows.length === 0) {

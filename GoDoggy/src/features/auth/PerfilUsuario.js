@@ -5,6 +5,7 @@ import { styles } from "./PerfilUsuarioStyles";
 export default function PerfilUsuario({ navigation }) {
   const [userName, setUserName] = useState("Usuario");
   const [userImage, setUserImage] = useState(require("../../../assets/perfil.png"));
+  const [hoveredTab, setHoveredTab] = useState(null);
 
   useEffect(() => {
     const usuarioStr = localStorage.getItem("usuario");
@@ -93,25 +94,57 @@ export default function PerfilUsuario({ navigation }) {
       </ScrollView>
 
       <View style={styles.bottomTab}>
-        <TouchableOpacity onPress={() => navigation.navigate("Inicio_cliente")}>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onMouseEnter={() => setHoveredTab(0)}
+          onMouseLeave={() => setHoveredTab(null)}
+          onPressIn={() => setHoveredTab(0)}
+          onPressOut={() => setHoveredTab(null)}
+          onPress={() => navigation.navigate("Inicio_cliente")}
+        >
+          {hoveredTab === 0 && <Text style={styles.tabLabel}>Inicio</Text>}
           <Image
             source={require("../../../assets/casa.png")}
             style={styles.tabIconImg}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onMouseEnter={() => setHoveredTab(1)}
+          onMouseLeave={() => setHoveredTab(null)}
+          onPressIn={() => setHoveredTab(1)}
+          onPressOut={() => setHoveredTab(null)}
+          onPress={() => navigation.navigate("Servicio_Cliente_Inicio")}
+        >
+          {hoveredTab === 1 && <Text style={styles.tabLabel}>Servicio</Text>}
           <Image
             source={require("../../../assets/puntos.png")}
             style={styles.tabIconImg}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onMouseEnter={() => setHoveredTab(2)}
+          onMouseLeave={() => setHoveredTab(null)}
+          onPressIn={() => setHoveredTab(2)}
+          onPressOut={() => setHoveredTab(null)}
+          onPress={() => {/* Navegar a Mapa */}}
+        >
+          {hoveredTab === 2 && <Text style={styles.tabLabel}>Mapa</Text>}
           <Image
             source={require("../../../assets/maps.png")}
             style={styles.tabIconImg}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onMouseEnter={() => setHoveredTab(3)}
+          onMouseLeave={() => setHoveredTab(null)}
+          onPressIn={() => setHoveredTab(3)}
+          onPressOut={() => setHoveredTab(null)}
+          onPress={() => {/* Navegar a Notificaciones */}}
+        >
+          {hoveredTab === 3 && <Text style={styles.tabLabel}>Notificaciones</Text>}
           <Image
             source={require("../../../assets/Notificaciones.png")}
             style={styles.tabIconImg}

@@ -60,4 +60,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabIconImg: { width: 40, height: 40, resizeMode: "contain" },
+  tabItem: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabLabel: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+  },
 });

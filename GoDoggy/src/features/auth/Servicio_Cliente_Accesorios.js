@@ -1,109 +1,106 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { styles } from "./Inicio_clienteStyles";
+import { styles } from "./Servicio_Cliente_AccesoriosStyles";
 
-export default function Inicio_cliente({ route, navigation }) {
+export default function Servicio_Cliente_Accesorios({ route, navigation }) {
 
   // ========================
   // ESTADOS
   // ========================
-  const [mascotas, setMascotas] = useState([]);
+  const [productos, setProductos] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
 
   // ========================
   // FUNCIONES
   // ========================
-  const irPerfil = () => navigation.navigate("PerfilUsuario");
   const regresar = () => navigation.goBack();
-  const irRegistroMascota = () => navigation.navigate("RegistroMascota");
 
   useFocusEffect(
     useCallback(() => {
-      const cargarMascotas = async () => {
+      const cargarProductos = async () => {
         try {
-          // Obtener usuario de localStorage
-          const usuarioGuardado = localStorage.getItem("usuario");
-          if (!usuarioGuardado) {
-            console.error("No hay usuario guardado en localStorage");
-            setMascotas([]);
-            return;
-          }
-
-          const usuario = JSON.parse(usuarioGuardado);
-          const usuarioId = usuario.usuario_id;
-          
-          console.log("Cargando mascotas para usuario ID:", usuarioId);
-
-          const response = await fetch(`http://localhost:3000/mascotas/${usuarioId}`);
-          const data = await response.json();
-          console.log("Mascotas cargadas:", data);
-          setMascotas(data);
+          console.log("Cargando accesorios...");
+          setProductos([]);
         } catch (error) {
-          console.error("Error cargando mascotas:", error);
-          setMascotas([]);
+          console.error("Error cargando productos:", error);
+          setProductos([]);
         }
       };
-      cargarMascotas();
+      cargarProductos();
     }, [])
   );
 
-  useEffect(() => {
-    console.log("Estado mascotas:", mascotas);
-  }, [mascotas]);
+  // ========================
+  // DATOS DE EJEMPLO
+  // ========================
+  const productosEjemplo = [
+    {
+      id: 1,
+      nombre: "Correa Premium",
+      tipo: "Paseos",
+      precio: "$29.99",
+      imagen: require("../../../assets/perro1.jpg"),
+    },
+    {
+      id: 2,
+      nombre: "Collar Ajustable",
+      tipo: "Seguridad",
+      precio: "$19.99",
+      imagen: require("../../../assets/perro1.jpg"),
+    },
+    {
+      id: 3,
+      nombre: "Cama Confortable",
+      tipo: "Descanso",
+      precio: "$89.99",
+      imagen: require("../../../assets/perro1.jpg"),
+    },
+    {
+      id: 4,
+      nombre: "Juguetes Interactivos",
+      tipo: "Entretenimiento",
+      precio: "$24.99",
+      imagen: require("../../../assets/perro1.jpg"),
+    },
+  ];
 
-  // ========================
-  // UI
-  // ========================
   return (
     <View style={styles.container}>
 
-      {/* NAVBAR */}
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={irPerfil}>
-          <Text style={styles.navIcon}>☰</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={regresar}>
-          <Text style={styles.navIcon}>↩</Text>
-        </TouchableOpacity>
-      </View>
+      {/* BOTÓN REGRESAR */}
+      <TouchableOpacity onPress={regresar} style={styles.backButton}>
+        <Text style={styles.backText}>←</Text>
+      </TouchableOpacity>
 
       {/* TÍTULO */}
-      <Text style={styles.titleText}>Mis mascotas</Text>
+      <Text style={styles.titleText}>Accesorios</Text>
 
       {/* CONTENIDO */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
-        {mascotas.length === 0 ? (
-          <View style={{ padding: 30, alignItems: "center" }}>
-            <Text style={{ color: "#555" }}>No tienes mascotas registradas aún.</Text>
-            <Text style={{ color: "#555" }}>Usa + para crear una nueva.</Text>
-          </View>
-        ) : (
-          mascotas.map((mascota, index) => (
-            <TouchableOpacity key={`${mascota.nombre}-${index}`} style={styles.petCard} onPress={() => navigation.navigate("MascotaDetalles", { mascota })}>
-              <Image
-                source={mascota.url_foto ? { uri: `http://localhost:3000/uploads/${mascota.url_foto}` } : require("../../../assets/perro1.jpg")}
-                style={styles.petImage}
-              />
-              <View style={styles.petInfo}>
-                <Text style={styles.petName}>{mascota.nombre}</Text>
-                <Text style={styles.petDetails}>Animal: {mascota.raza}</Text>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
+        {productosEjemplo.map((producto, index) => (
+          <TouchableOpacity
+            key={`${producto.id}-${index}`}
+            style={styles.productoCard}
+            onPress={() => navigation.navigate("Servicio_Detalles_Accesorios", { accesorio: producto })}
+          >
+            {/* IMAGEN IZQUIERDA */}
+            <Image
+              source={producto.imagen}
+              style={styles.productoImage}
+            />
 
-        {/* BOTÓN BUSCAR */}
-        <TouchableOpacity style={styles.searchCircle}>
-          <Text style={styles.searchText}>Buscar paseador</Text>
-        </TouchableOpacity>
+            {/* INFORMACIÓN CENTRAL */}
+            <View style={styles.productoInfo}>
+              <Text style={styles.productoName}>{producto.nombre}</Text>
+              <Text style={styles.productoType}>{producto.tipo}</Text>
+            </View>
 
-        {/* BOTÓN AGREGAR */}
-        <TouchableOpacity style={styles.addButton} onPress={irRegistroMascota}>
-          <Text style={styles.addIcon}>+</Text>
-        </TouchableOpacity>
+            {/* PRECIO DERECHA */}
+            <Text style={styles.precio}>{producto.precio}</Text>
+          </TouchableOpacity>
+        ))}
 
       </ScrollView>
 

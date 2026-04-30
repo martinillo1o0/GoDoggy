@@ -1,56 +1,99 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { styles } from "./Inicio_clienteStyles";
+import { styles } from "./Servicio_Cliente_PaseadorStyles";
 
-export default function Inicio_cliente({ route, navigation }) {
+export default function Servicio_Cliente_Paseador({ route, navigation }) {
 
   // ========================
   // ESTADOS
   // ========================
-  const [mascotas, setMascotas] = useState([]);
+  const [paseadores, setPaseadores] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
 
   // ========================
   // FUNCIONES
   // ========================
-  const irPerfil = () => navigation.navigate("PerfilUsuario");
   const regresar = () => navigation.goBack();
-  const irRegistroMascota = () => navigation.navigate("RegistroMascota");
 
   useFocusEffect(
     useCallback(() => {
-      const cargarMascotas = async () => {
+      const cargarPaseadores = async () => {
         try {
           // Obtener usuario de localStorage
           const usuarioGuardado = localStorage.getItem("usuario");
           if (!usuarioGuardado) {
             console.error("No hay usuario guardado en localStorage");
-            setMascotas([]);
+            setPaseadores([]);
             return;
           }
 
           const usuario = JSON.parse(usuarioGuardado);
           const usuarioId = usuario.usuario_id;
           
-          console.log("Cargando mascotas para usuario ID:", usuarioId);
+          console.log("Cargando paseadores para usuario ID:", usuarioId);
 
-          const response = await fetch(`http://localhost:3000/mascotas/${usuarioId}`);
+          const response = await fetch(`http://localhost:3000/paseadores/${usuarioId}`);
           const data = await response.json();
-          console.log("Mascotas cargadas:", data);
-          setMascotas(data);
+          console.log("Paseadores cargados:", data);
+          setPaseadores(data);
         } catch (error) {
-          console.error("Error cargando mascotas:", error);
-          setMascotas([]);
+          console.error("Error cargando paseadores:", error);
+          setPaseadores([]);
         }
       };
-      cargarMascotas();
+      cargarPaseadores();
     }, [])
   );
 
-  useEffect(() => {
-    console.log("Estado mascotas:", mascotas);
-  }, [mascotas]);
+  // ========================
+  // DATOS DE EJEMPLO
+  // ========================
+  const paseadoresEjemplo = [
+    {
+      id: 1,
+      nombre: "Karina Rodriguez",
+      tipo: "Paseo Diario",
+      resenias: 4.8,
+      imagen: require("../../../assets/imagen_karibe.jpeg"),
+    },
+    {
+      id: 2,
+      nombre: "Ricardo García",
+      tipo: "Paseo Extenso",
+      resenias: 4.9,
+      imagen: require("../../../assets/imagen_mamberroi.jpeg"),
+    },
+    {
+      id: 3,
+      nombre: "Anshelo Arellano",
+      tipo: "Paseo + Juego",
+      resenias: 4.7,
+      imagen: require("../../../assets/imagen_bodoque.jpeg"),
+    },
+  ];
+
+  // ========================
+  // FUNCIÓN PARA RENDERIZAR ESTRELLAS
+  // ========================
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <View style={styles.starsContainer}>
+        {Array(fullStars).fill(0).map((_, i) => (
+          <Text key={`full-${i}`} style={styles.star}>★</Text>
+        ))}
+        {hasHalfStar && <Text style={styles.halfStar}>⭐</Text>}
+        {Array(emptyStars).fill(0).map((_, i) => (
+          <Text key={`empty-${i}`} style={styles.emptyStar}>☆</Text>
+        ))}
+        <Text style={styles.ratingText}>{rating}</Text>
+      </View>
+    );
+  };
 
   // ========================
   // UI
@@ -58,52 +101,39 @@ export default function Inicio_cliente({ route, navigation }) {
   return (
     <View style={styles.container}>
 
-      {/* NAVBAR */}
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={irPerfil}>
-          <Text style={styles.navIcon}>☰</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={regresar}>
-          <Text style={styles.navIcon}>↩</Text>
-        </TouchableOpacity>
-      </View>
+      {/* BOTÓN REGRESAR */}
+      <TouchableOpacity onPress={regresar} style={styles.backButton}>
+        <Text style={styles.backText}>←</Text>
+      </TouchableOpacity>
 
       {/* TÍTULO */}
-      <Text style={styles.titleText}>Mis mascotas</Text>
+      <Text style={styles.titleText}>Paseadores Disponibles</Text>
 
       {/* CONTENIDO */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
-        {mascotas.length === 0 ? (
-          <View style={{ padding: 30, alignItems: "center" }}>
-            <Text style={{ color: "#555" }}>No tienes mascotas registradas aún.</Text>
-            <Text style={{ color: "#555" }}>Usa + para crear una nueva.</Text>
-          </View>
-        ) : (
-          mascotas.map((mascota, index) => (
-            <TouchableOpacity key={`${mascota.nombre}-${index}`} style={styles.petCard} onPress={() => navigation.navigate("MascotaDetalles", { mascota })}>
-              <Image
-                source={mascota.url_foto ? { uri: `http://localhost:3000/uploads/${mascota.url_foto}` } : require("../../../assets/perro1.jpg")}
-                style={styles.petImage}
-              />
-              <View style={styles.petInfo}>
-                <Text style={styles.petName}>{mascota.nombre}</Text>
-                <Text style={styles.petDetails}>Animal: {mascota.raza}</Text>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
+        {(paseadores.length === 0 ? paseadoresEjemplo : paseadores).map((paseador, index) => (
+          <TouchableOpacity
+            key={`${paseador.id || paseador.nombre}-${index}`}
+            style={styles.paseadorCard}
+            onPress={() => navigation.navigate("Servicio_Detalles_Paseador", { paseador })}
+          >
+            {/* IMAGEN IZQUIERDA */}
+            <Image
+              source={paseador.imagen}
+              style={styles.paseadorImage}
+            />
 
-        {/* BOTÓN BUSCAR */}
-        <TouchableOpacity style={styles.searchCircle}>
-          <Text style={styles.searchText}>Buscar paseador</Text>
-        </TouchableOpacity>
+            {/* INFORMACIÓN CENTRAL */}
+            <View style={styles.paseadorInfo}>
+              <Text style={styles.paseadorName}>{paseador.nombre}</Text>
+              <Text style={styles.serviceType}>{paseador.tipo}</Text>
+            </View>
 
-        {/* BOTÓN AGREGAR */}
-        <TouchableOpacity style={styles.addButton} onPress={irRegistroMascota}>
-          <Text style={styles.addIcon}>+</Text>
-        </TouchableOpacity>
+            {/* RESEÑAS DERECHA */}
+            {renderStars(paseador.resenias)}
+          </TouchableOpacity>
+        ))}
 
       </ScrollView>
 
